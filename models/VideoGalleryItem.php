@@ -59,13 +59,16 @@ class VideoGalleryItem extends ActiveRecord
             'update'   => ['code', 'video_gallery_id', 'url', 'title', 'description', 'sort'],
         ];
     }
-
+    public function beforeSave($insert) {
+        $$this->code = $this->getVideoCode() ;
+        parent::beforeSave($insert);
+    }
     /** @inheritdoc */
     public function rules()
     {
         return [
             // code rules
-            ['code', 'required', 'on' => ['create', 'update']],
+            ['required', 'on' => ['create', 'update']],
             ['code', 'match', 'pattern' => '/^[0-9a-zA-Z\_\.\-]+$/'],
             ['code', 'string', 'min' => 3, 'max' => 255],
             ['code', 'unique'],
