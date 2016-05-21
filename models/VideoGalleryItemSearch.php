@@ -95,6 +95,32 @@ class VideoGalleryItemSearch extends Model
 
         return $dataProvider;
     }
+/**
+     * @param $params
+     * @param $video_gallery_id
+     * @return ActiveDataProvider
+     */
+    public function searchGenreal($params)
+    {
+        $query = $this->module->manager->createVideoGalleryItemQuery();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+
+        $this->addCondition($query, 'video_gallery_id');
+        $this->addCondition($query, 'title', true);
+        $this->addCondition($query, 'code', true);
+        $this->addCondition($query, 'url', true);
+        $this->addCondition($query, 'sort');
+        $this->addCondition($query, 'created_at');
+
+        return $dataProvider;
+    }
 
     /**
      * @param $query
