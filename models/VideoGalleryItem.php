@@ -68,7 +68,7 @@ class VideoGalleryItem extends ActiveRecord
     {
         return [
             // code rules
-            ['required', 'on' => ['create', 'update']],
+            //['required', 'on' => ['create', 'update']],
             ['code', 'match', 'pattern' => '/^[0-9a-zA-Z\_\.\-]+$/'],
             ['code', 'string', 'min' => 3, 'max' => 255],
             ['code', 'unique'],
