@@ -7,6 +7,8 @@ use yii\db\ActiveRecord;
 use yii\log\Logger;
 use Yii;
 use yiidreamteam\upload\VideoUploadBehavior;
+use sjaakp\taggable\TaggableBehavior;
+use common\models\Tag;
 
 /**
  * VideoGalleryItem ActiveRecord model.
@@ -28,6 +30,11 @@ use yiidreamteam\upload\VideoUploadBehavior;
  */
 class VideoGalleryItem extends ActiveRecord
 {
+      /**
+     * @var integer
+     */
+    public $key_words;
+    
     /** @inheritdoc */
     public function attributeLabels()
     {
@@ -39,6 +46,7 @@ class VideoGalleryItem extends ActiveRecord
             'description'  => \Yii::t('video_gallery', 'Description'),
             'sort'         => \Yii::t('video_gallery', 'Sort index'),
             'created_at'   => \Yii::t('video_gallery', 'Created at'),
+            'key_words'   => \Yii::t('video_gallery', 'Key Words'),
             'updated_at'   => \Yii::t('video_gallery', 'Updated at'),
         ];
     }
@@ -48,6 +56,11 @@ class VideoGalleryItem extends ActiveRecord
     {
         return [
             TimestampBehavior::className(),
+            'taggable' => [
+                'class' => TaggableBehavior::className(),
+                'tagClass' => Tag::className(),
+                'junctionTable' => 'ns_article_tag',
+            ]    
         ];
     }
 
@@ -55,13 +68,13 @@ class VideoGalleryItem extends ActiveRecord
     public function scenarios()
     {
         return [
-            'create'   => ['code', 'video_gallery_id', 'url', 'title', 'description', 'sort'],
-            'update'   => ['code', 'video_gallery_id', 'url', 'title', 'description', 'sort'],
+            'create'   => ['code', 'video_gallery_id', 'key_words' ,'url', 'title', 'description', 'sort'],
+            'update'   => ['code', 'video_gallery_id', 'url', 'key_words', 'title', 'description', 'sort'],
         ];
     }
     public function beforeSave($insert) {
-        $$this->code = $this->getVideoCode() ;
-        parent::beforeSave($insert);
+        $this->code = $this->getVideoCode() ;
+       return parent::beforeSave($insert);
     }
     /** @inheritdoc */
     public function rules()
@@ -73,24 +86,29 @@ class VideoGalleryItem extends ActiveRecord
             ['code', 'string', 'min' => 3, 'max' => 255],
             ['code', 'unique'],
             ['code', 'trim'],
+            
+            ['key_words', 'integer' , 'on' => ['create', 'update']],
 
             ['video_gallery_id', 'required'],
-
+            
             ['url', 'required'],
             ['url', 'url'],
             ['url', 'string', 'max' => 255],
             ['url', 'trim'],
-
+            
             ['sort', 'integer'],
             ['sort', 'trim'],
-
+            
             ['title', 'string', 'max' => 255],
             ['title', 'trim'],
-
+            
             ['description', 'safe'],
         ];
     }
-
+    public static function find() {       
+        
+        return parent::find()->orderBy('id DESC');
+    }
     public function create()
     {
         if ($this->getIsNewRecord() == false) {
