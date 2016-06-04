@@ -42,6 +42,11 @@ class VideoGalleryItemSearch extends Model
      * @var integer
      */
     public $created_at;
+    
+     /**
+     * @var integer
+     */
+    public $key_words;
 
     /**
      * @inheritdoc
@@ -49,7 +54,7 @@ class VideoGalleryItemSearch extends Model
     public function rules()
     {
         return [
-            [['video_gallery_id', 'created_at', 'sort'], 'integer'],
+            [['video_gallery_id', 'created_at', 'sort','key_words'], 'integer'],
             [['url', 'title', 'sort', 'code'], 'safe'],
         ];
     }
@@ -95,7 +100,8 @@ class VideoGalleryItemSearch extends Model
 
         return $dataProvider;
     }
-/**
+    
+    /**
      * @param $params
      * @param $video_gallery_id
      * @return ActiveDataProvider
